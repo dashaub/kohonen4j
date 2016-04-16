@@ -15,9 +15,9 @@ import java.io.*;
 import java.util.*;
 public class Kohonen extends JFrame
 {
+	private JFrame window = new JFrame("Self-Organizing Map");
 	private JButton fileChooser = new JButton("Input File");
 	private ArrayList <Double> inputData;
-	
 	
 	class ButtonListener implements ActionListener 
 	{
@@ -29,8 +29,18 @@ public class Kohonen extends JFrame
 		 * */
 		public void actionPerformed(ActionEvent e) 
 		{
+			System.out.println("Activated");
 			if(e.getSource() == fileChooser)
 			{
+				JFileChooser fc = new JFileChooser();
+				System.out.println("Running!");
+				fc.setCurrentDirectory(new File(System.getProperty("user.home")));
+				int result = fc.showOpenDialog(null);
+				if (result == fc.APPROVE_OPTION)
+				{
+					System.out.println(fc.getSelectedFile());
+				}
+				/**
 				try
 				{
 					Scanner inFile = new Scanner(new File("wines.csv"));
@@ -39,14 +49,18 @@ public class Kohonen extends JFrame
 				{
 					JOptionPane.showMessageDialog(null, "Cannot read file. Select a valid file.");
 				}
+				* */
 			}
 		}
 	}
 	
 	public Kohonen()
 	{
+
+		
+		
 		//Construct the JFrame
-		JFrame window = new JFrame("Self-Organizing Map");
+		
 		window.setSize (800, 200);
 		window.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 		window.setLayout(new FlowLayout());
@@ -74,10 +88,10 @@ public class Kohonen extends JFrame
 		window.add(yDim);
 		
 		//Input
-		JButton inputButton= new JButton("Input file");
+		//JButton inputButton= new JButton("Input file");
 		ButtonListener bl = new ButtonListener();
-		inputButton.addActionListener(bl);
-		window.add(inputButton);
+		fileChooser.addActionListener(bl);
+		window.add(fileChooser);
 		//JFileChooser fc = new JFileChooser();
 		//window.add(fc, BorderLayout.NORTH);
 		
