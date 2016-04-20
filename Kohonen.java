@@ -15,7 +15,7 @@
  * displaying the results.
  * 
  * @author David Shaub
- * @version 1.0
+ * @version 1.0.0
  * 
  * */
  
@@ -28,7 +28,8 @@ public class Kohonen extends JFrame
 {
 	// Instance variables
 	private JButton fileChooser = new JButton("Input File");
-	private ArrayList <Double[]> inputData = new ArrayList<Double[]>(); 
+	private ArrayList <Double[]> inputData = new ArrayList<Double[]>();
+	private Grid trainData;
 	
 	/**
 	 * Read in the input csv data
@@ -68,7 +69,7 @@ public class Kohonen extends JFrame
 			parser.next();
 			numColumns++;
 		}
-		// There should be at least columns
+		// There should be at least two columns
 		if(numColumns < 2)
 		{
 			JOptionPane.showMessageDialog(null, "The file should have at least two columns.");
@@ -103,6 +104,33 @@ public class Kohonen extends JFrame
 				return;
 			}
 		}
+		
+		
+		// Ensure # rows >= # cols
+		if(inputData.size() < numColumns)
+		{
+			JOptionPane.showMessageDialog(null, "There must be at least as many data rows as columns in the file.");
+			return;
+		}
+		
+		// The data has passed validity checks, so convert to an array
+		double[][] validData = new double[inputData.size()][numColumns];
+		for(int i = 0; i < inputData.size(); i++)
+		{
+			for(int j = 0; j < inputData.get(i).length; j++)
+			{
+				validData[i][j] = inputData.get(i)[j];
+			}
+		}
+		
+		// Convert to a grid object
+		trainData = new Grid(validData);
+		System.out.println("Grid successful");
+		
+		// Scale will fail if a column is all the same value
+		// Ensure non-zero variance of columns
+		
+		// Now scale the grid
 	}
 	
 	class ButtonListener implements ActionListener 
