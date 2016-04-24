@@ -147,11 +147,14 @@ public class Kohonen extends JFrame
 		System.out.println("Grid successful");
 		//trainData = trainData.scaleGrid;
 		System.out.println("Grid scaled");
+		int xVal;
+		int yVal;
+		int epochVal;
 		try
 		{
-			int xVal = Integer.parseInt(xDim.getText());
-			int yVal = Integer.parseInt(yDim.getText());
-			int epochVal = Integer.parseInt(epochs.getText());
+			xVal = Integer.parseInt(xDim.getText());
+			yVal = Integer.parseInt(yDim.getText());
+			epochVal = Integer.parseInt(epochs.getText());
 		}
 		catch(NumberFormatException nfe)
 		{
