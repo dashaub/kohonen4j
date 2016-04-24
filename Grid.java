@@ -74,7 +74,7 @@ public class Grid
 	 * */
 	 public double getObs(int row, int column)
 	 {
-		 return gridData[row][column];
+		 return this.gridData[row][column];
 	 }
 	
 	/**
@@ -213,9 +213,9 @@ public class Grid
 	 * is used with a rectangular geometry grid.
 	 * 
 	 * */
-	 public Grid distance(Grid input)
+	 public Grid distance()
 	 {
-		 int nRow = input.gridData.length;
+		 int nRow = this.gridData.length;
 		 double xDist;
 		 double yDist;
 		 double [][] distances = new double[nRow][nRow];
@@ -229,8 +229,8 @@ public class Grid
 				 // Calculate on every column
 				 for(int j = 0; j < nRow; j++)
 				 {
-					 xDist = Math.abs(input.getObs(currentObs, 0) - input.getObs(j, 0));
-					 yDist = Math.abs(input.getObs(currentObs, 1) - input.getObs(j, 1));
+					 xDist = Math.abs(this.getObs(currentObs, 0) - this.getObs(j, 0));
+					 yDist = Math.abs(this.getObs(currentObs, 1) - this.getObs(j, 1));
 					 distances[i][j] = Math.max(xDist, yDist);
 				 }
 
