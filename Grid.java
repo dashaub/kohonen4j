@@ -63,6 +63,21 @@ public class Grid
 	
 	
 	/**
+	 * Extract the data for a given row and column
+	 * from a Grid object.
+	 * 
+	 * @param row The row position
+	 * @param column The column position
+	 * 
+	 * @return The value at the row and column position
+	 * 
+	 * */
+	 public double getObs(int row, int column)
+	 {
+		 return gridData[row][column];
+	 }
+	
+	/**
 	 * Calculuate the mean of an array
 	 * This method returns the mean of 
 	 * an input array.
@@ -189,6 +204,40 @@ public class Grid
 		}
 		System.out.println("Scaled successfully");
 	}
+	
+	
+	/**
+	 * Calculuate the pair-wise distances
+	 * between all points on the output Kohonen
+	 * grid. The maximum, rectilinear distance
+	 * is used with a rectangular geometry grid.
+	 * 
+	 * */
+	 public Grid distance(Grid input)
+	 {
+		 int nRow = input.gridData.length;
+		 double xDist;
+		 double yDist;
+		 double [][] distances = new double[nRow][nRow];
+		 // Calculate for every point
+		 // The result with be a matrix of dimensions nRow * nRow
+		 for(int currentObs = 0; currentObs < nRow; currentObs++)
+		 {
+			 // Calculate on every row
+			 for(int i = 0; i < nRow; i++)
+			 {
+				 // Calculate on every column
+				 for(int j = 0; j < nRow; j++)
+				 {
+					 xDist = Math.abs(input.getObs(currentObs, 0) - input.getObs(j, 0));
+					 yDist = Math.abs(input.getObs(currentObs, 1) - input.getObs(j, 1));
+					 distances[i][j] = Math.max(xDist, yDist);
+				 }
+
+			 }
+		 } 
+		 return new Grid(distances);
+	 }
 	
 	
 	/**
