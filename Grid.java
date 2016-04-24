@@ -1,6 +1,6 @@
 //Grid.java
 /**
- * Representation of grid objects
+ * Representation of Grid objects
  * 
  * This class contains methods for representing
  * non-jagged, rectancular data arrays. Useful
@@ -21,15 +21,9 @@
 import java.util.*;
 public class Grid
 {
-	private double [][] gridData;
+	protected double [][] gridData;
 	
-	/**
-	 * Single argument constructor
-	 * 
-	 * @param input The input array. It must have at least two rows,
-	 * at least two columns, and at least as many rows as columns.
-	 * 
-	 * */
+	// Single argument constructor
 	public Grid(double [][] input)
 	{
 		// Enforce properties for Grid objects
@@ -51,14 +45,14 @@ public class Grid
 		// Don't allow jagged arrays
 		for(int i = 0; i < input.length; i++)
 		{
-			if(input.length != input[i].length)
+			if(input[0].length != input[i].length)
 			{
 				throw new IllegalArgumentException();
 			}
 		}
+		
 		gridData = input;
 	}
-	
 	
 	/**
 	 * Calculuate the mean of an array
@@ -84,8 +78,7 @@ public class Grid
 	/**
 	 * Calculuate the variance of an array
 	 * This method returns the variance of 
-	 * an input array. A sample-size correction
-	 * is not used.
+	 * an input array.
 	 * 
 	 * @param inputArray The array for calculation
 	 * 
@@ -109,7 +102,7 @@ public class Grid
 	 * An important property to avoid in a data
 	 * set for machine learning is columns with
 	 * zero variance. These are columns that have
-	 * only one unique value. This can be detected by 
+	 * only one value. This can be detected by 
 	 * finding columns with no variance.
 	 * 
 	 * @return Whether the Grid object has at least
@@ -132,6 +125,9 @@ public class Grid
 				return true;
 			}
 		}
+
+		
+		
 		return false;
 	}
 	
@@ -148,7 +144,7 @@ public class Grid
 	 * on distances measures so that the results
 	 * of the algorithm are independent of the scale
 	 * of the input data and units in which they are
-	 * expressed. Note: if any column in the Grid object
+	 * expressed. Note: if a column in the Grid object
 	 * has zero variance, the scaling operation will
 	 * not be performed.
 	 * 
