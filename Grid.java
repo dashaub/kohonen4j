@@ -23,7 +23,14 @@ public class Grid
 {
 	protected double [][] gridData;
 	
-	// Single argument constructor
+	
+	/**
+	 * Single argument constructor
+	 * 
+	 * @param input The input array. It must have at least two rows,
+	 * at least two columns, and at least as many rows as columns.
+	 * 
+	 * */
 	public Grid(double [][] input)
 	{
 		// Enforce properties for Grid objects
@@ -54,6 +61,7 @@ public class Grid
 		gridData = input;
 	}
 	
+	
 	/**
 	 * Calculuate the mean of an array
 	 * This method returns the mean of 
@@ -78,7 +86,8 @@ public class Grid
 	/**
 	 * Calculuate the variance of an array
 	 * This method returns the variance of 
-	 * an input array.
+	 * an input array. A sample-size correction
+	 * is not used.
 	 * 
 	 * @param inputArray The array for calculation
 	 * 
@@ -102,7 +111,7 @@ public class Grid
 	 * An important property to avoid in a data
 	 * set for machine learning is columns with
 	 * zero variance. These are columns that have
-	 * only one value. This can be detected by 
+	 * only one unique value. This can be detected by 
 	 * finding columns with no variance.
 	 * 
 	 * @return Whether the Grid object has at least
@@ -125,9 +134,6 @@ public class Grid
 				return true;
 			}
 		}
-
-		
-		
 		return false;
 	}
 	
@@ -144,7 +150,7 @@ public class Grid
 	 * on distances measures so that the results
 	 * of the algorithm are independent of the scale
 	 * of the input data and units in which they are
-	 * expressed. Note: if a column in the Grid object
+	 * expressed. Note: if any column in the Grid object
 	 * has zero variance, the scaling operation will
 	 * not be performed.
 	 * 
