@@ -1,12 +1,28 @@
 //SOM.java
 /**
+ * Fit a self-organizing map to a dataset.
+ * 
+ * Copyright (C) 2016 David Shaub
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * @author David Shaub
  * @version 1.0.0
  * 
  * */
  
- import java.util.*;
+import java.util.*;
 public class SOM extends Grid
 {
 	private int xDim;
@@ -35,8 +51,29 @@ public class SOM extends Grid
 	 * maps to the training data
 	 * 
 	 * */
-	public Grid train()
+	public void train()
 	{
+		init();
+		int dataRows = this.gridData.length;
+		int dataColumns = this.gridData[0].length;
+		int weightsRows;
+		int iterations = this.epochs * dataRows;
+		int currentObs;
+		int nearestNode;
+		double nearestDistance;
+		
+		// Adapted from the C code for VR_onlineSOM in the R 'class' package
+		for(int i = 0; i < iterations; i++)
+		{
+			// Choose a random set of observations
+			currentObs = (int)(Math.random() * dataRows);
+			// Find its nearest node
+			// Start with the first observation matching
+			// And the maximum distance possible
+			nearestNode = 0; nearestDistance = 1.7976931348623157E308;
+		}
+		
+		/**
 		// Prepare the output grid for 
 		// calculating pair distances
 		pairArray = new double[xDim][2];
@@ -48,7 +85,8 @@ public class SOM extends Grid
 				pairArray[xDim][1] = yDim;
 			}
 		}
-		return new Grid(pairArray);
+		* */
+		//return new Grid(pairArray);
 	}
 	
 	
@@ -81,10 +119,10 @@ public class SOM extends Grid
 		// Sample from the data to determine
 		// which observations to use
 		// for initial weights
-		HashSet samplePoints = new HashSet();
+		Set <Integer> samplePoints = new HashSet <Integer>();
 		while(samplePoints.size() < dataRows)
 		{
-			samplePoints.add((int)(Math.random() * dataRows + 1));
+			samplePoints.add((int)(Math.random() * dataRows));
 		}
 		
 		// Use the selected rows to build the starting weights
@@ -97,4 +135,5 @@ public class SOM extends Grid
 			}
 		}
 	}
+	Grid distGrid = new Grid(pairArray).distance();
 }
