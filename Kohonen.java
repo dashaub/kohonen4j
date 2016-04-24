@@ -1,5 +1,22 @@
 //Kohonen.java
 /**
+ * A simple GUI for fitting self-organizing maps.
+ * 
+ * Copyright (C) 2016 David Shaub
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
  * Visualize cell counts of a rectangular 
  * self-organizing map. Thie program fits
  * a Kohonen network to an input containing
@@ -30,6 +47,9 @@ public class Kohonen extends JFrame
 	private JButton fileChooser = new JButton("Input File");
 	private ArrayList <Double[]> inputData = new ArrayList<Double[]>();
 	private Grid trainData;
+	private JTextField xDim = new JTextField(3);
+	private JTextField yDim = new JTextField(3);
+	private JTextField epochs = new JTextField(4);
 	
 	/**
 	 * Read in the input csv data
@@ -105,7 +125,6 @@ public class Kohonen extends JFrame
 			}
 		}
 		
-		
 		// Ensure # rows >= # cols
 		if(inputData.size() < numColumns)
 		{
@@ -124,8 +143,29 @@ public class Kohonen extends JFrame
 		}
 		
 		// Convert to a grid object
-		trainData = new Grid(validData);
+		//trainData = new Grid(validData);
 		System.out.println("Grid successful");
+		//trainData = trainData.scaleGrid;
+		System.out.println("Grid scaled");
+		try
+		{
+			int xVal = Integer.parseInt(xDim.getText());
+			int yVal = Integer.parseInt(yDim.getText());
+			int epochVal = Integer.parseInt(epochs.getText());
+		}
+		catch(NumberFormatException nfe)
+		{
+			JOptionPane.showMessageDialog(null, "The grid dimensions and training epochs must be positive integers.");
+			return;
+		}
+		// Create the SOM object
+		SOM training = new SOM(validData, xVal, yVal, epochVal);
+		// Prepare the object for training (i.e. weights and distances)
+		//training.init();
+		// Train the object and store the result
+		//training.train();
+		
+		
 		
 		// Scale will fail if a column is all the same value
 		// Ensure non-zero variance of columns
@@ -176,7 +216,7 @@ public class Kohonen extends JFrame
 		//Epochs
 		JLabel epochLabel = new JLabel("Training epochs");
 		window.add(epochLabel);
-		JTextField epochs = new JTextField(4);
+		
 		epochs.setText("500");
 		window.add(epochs);
 		
@@ -184,9 +224,7 @@ public class Kohonen extends JFrame
 		JLabel dimensionLabel = new JLabel("Grid dimensions");
 		window.add(dimensionLabel);
 		JPanel gridElements = new JPanel();
-		JTextField xDim = new JTextField(3);
 		xDim.setText("5");
-		JTextField yDim = new JTextField(3);
 		yDim.setText("5");
 		window.add(xDim);
 		window.add(yDim);
