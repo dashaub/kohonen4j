@@ -85,9 +85,9 @@ public class SOM extends Grid
 		double [] nodes = new double[weightsRows * weightsRows];
 		double [] distPairs = new double[pairArray.length * pairArray[0].length];
 		int count = 0;
-		for(int i = 0; i < dataColumns; i++)
+		for(int i = 0; i < dataRows; i++)
 		{
-			for(int j = 0; j < dataRows; j++)
+			for(int j = 0; j < dataColumns; j++)
 			{
 				data[count] = this.gridData[i][j];
 				count++;
@@ -105,7 +105,7 @@ public class SOM extends Grid
 		count = 0;
 		for(int i = 0; i < this.pairArray.length; i++)
 		{
-			for(int j = 0; j < this.pairArray.length; j++)
+			for(int j = 0; j < this.pairArray[0].length; j++)
 			{
 				distPairs[count] = this.pairArray[i][j];
 				count++;
@@ -122,6 +122,7 @@ public class SOM extends Grid
 		{
 			// Choose a random observation for fitting
 			currentObs = (int)(Math.random() * dataRows);
+			System.out.println("Using observation " + currentObs);
 			// Find its nearest node
 			// Start with the maximum distance possible
 			//nearestNode = 0;
@@ -133,6 +134,8 @@ public class SOM extends Grid
 				dist = 0;
 				for(int k = 0; k < dataColumns; k++)
 				{
+					System.out.println("node length: " + nodes.length);
+					System.out.println("i:" + i + " j:" + j + "k:" + k);
 					// For the current random observation and the current column,
 					// find the difference, i.e. the rectilinear distance
 					tmp = data[currentObs + k * dataRows] - nodes[j + k * weightsRows];
@@ -205,7 +208,7 @@ public class SOM extends Grid
 	 * */
 	private void init()
 	{
-		// Prepare the output grid for 
+		// Prepare the array for 
 		// calculating pair distances
 		pairArray = new double[xDim * yDim][2];
 		int count = 0;
@@ -227,19 +230,26 @@ public class SOM extends Grid
 		// which observations to use
 		// for initial weights
 		Set <Integer> samplePoints = new HashSet <Integer>();
-		while(samplePoints.size() < dataRows)
+		while(samplePoints.size() < pairRows)
 		{
 			samplePoints.add((int)(Math.random() * dataRows));
 		}
+		System.out.println(samplePoints);
 		
 		// Use the selected rows to build the starting weights
+		System.out.println("pairRows:" + pairRows);
+		System.out.println(gridData[0].length);
 		weights = new double[pairRows][gridData[0].length];
-		for(int i = 0; i < pairRows; i++)
+		for(int i = 0; i < samplePoints.size(); i++)
 		{
+			//currentRow = samplePoints.get(i);
 			for(int j = 0; j < gridData[0].length; j++)
 			{
+				// Broken implementation here
 				weights[i][j] = gridData[i][j];
+				System.out.print("" + gridData[i][j] + " ");
 			}
+			System.out.println();
 		}
 	}
 	//Grid distGrid = new Grid(pairArray).distance();
