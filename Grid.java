@@ -74,7 +74,7 @@ public class Grid
 			}
 		}
 		
-		gridData = input;
+		this.gridData = input;
 	}
 	
 	
@@ -263,6 +263,29 @@ public class Grid
 			 }
 		 } 
 		 return new Grid(distances);
+	 }
+	 
+	 
+	 /**
+	  * A string representation of the object.
+	  * 
+	  * @return A string representation of the Grid object.
+	  * 
+	  * */
+	 public String toString()
+	 {
+		 String s = "";
+		 // Traverse the current row
+		 for(int i = 0; i < gridData.length; i++)
+		 {
+			 // Traverse all the columns
+			 for(int j = 0; j < gridData[0].length; j++)
+			 {
+				 s += (gridData[i][j]+ " ");
+			 }
+			 s += "\n";
+		 }
+		 return s;
 	 }
 	
 	
