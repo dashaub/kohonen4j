@@ -97,6 +97,7 @@ public class Kohonen extends JFrame
 		}
 		// Now read the data
 		Double [] currentRow = new Double[numColumns];
+		int rowNum = 0;
 		while(inFile.hasNext())
 		{
 			currentLine = inFile.next();
@@ -104,12 +105,28 @@ public class Kohonen extends JFrame
 			parser.useDelimiter(",");
 			try
 			{
+				currentRow = new Double[numColumns];
 				// Ignore data in rows with more entries than in the header
 				for(int i = 0; i < numColumns; i++)
 				{
 					currentRow[i] = Double.parseDouble(parser.next());
+					System.out.print("" + currentRow[i] + " ");
 				}
 				inputData.add(currentRow);
+				//inputData.add(Collections.addAll(new ArrayList <Double []>(), currentRow));
+				//inputData.add(Arrays.copyOf(currentRow));
+				// Fill the array
+				//inputData.add(new Double[numColumns]);
+				/**
+				 * Failed attempt at adding an empty array
+				 * and updating 
+				for(int j = 0; j < currentRow.length; j++)
+				{
+					inputData.set(rowNum)[j] = currentRow[j];
+				}
+				rowNum++;
+				* */
+				System.out.println();
 			}
 			// Ensure the data are parsed to numeric
 			catch(NumberFormatException nfe)
@@ -134,12 +151,19 @@ public class Kohonen extends JFrame
 		
 		// The data has passed validity checks, so convert to an array
 		double[][] validData = new double[inputData.size()][numColumns];
+		Double [] tmpArray;
 		for(int i = 0; i < inputData.size(); i++)
 		{
-			for(int j = 0; j < inputData.get(i).length; j++)
+			System.out.println("i " + i);
+			//System.out.println(inputData.get(i));
+			tmpArray = inputData.get(i);
+			for(int j = 0; j < numColumns; j++)
 			{
-				validData[i][j] = inputData.get(i)[j];
+				System.out.println("" + tmpArray[j] + ", ");
+				validData[i][j] = tmpArray[j];
+				//System.out.print("" + validData[i][j] + ", ");
 			}
+			System.out.println();
 		}
 		
 		// Convert to a grid object
@@ -166,7 +190,7 @@ public class Kohonen extends JFrame
 		// Prepare the object for training (i.e. weights and distances)
 		//training.init();
 		// Train the object and store the result
-		//training.train();
+		training.train();
 		
 		
 		
@@ -220,7 +244,7 @@ public class Kohonen extends JFrame
 		JLabel epochLabel = new JLabel("Training epochs");
 		window.add(epochLabel);
 		
-		epochs.setText("500");
+		epochs.setText("20");
 		window.add(epochs);
 		
 		//Grid size
