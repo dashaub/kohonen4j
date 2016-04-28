@@ -235,18 +235,23 @@ public class SOM extends Grid
 			samplePoints.add((int)(Math.random() * dataRows));
 		}
 		System.out.println(samplePoints);
+		Integer [] sampleIndex = samplePoints.toArray(new Integer[samplePoints.size()]);
 		
 		// Use the selected rows to build the starting weights
 		System.out.println("pairRows:" + pairRows);
 		System.out.println(gridData[0].length);
 		weights = new double[pairRows][gridData[0].length];
-		for(int i = 0; i < samplePoints.size(); i++)
+		int weightCount = 0;
+		System.out.println("Here is the grid");
+		//System.out.println(this);
+		for(Integer i : sampleIndex)
 		{
+			System.out.println("Selecting row " + i);
+			System.out.println("Number of rows " + gridData.length);
 			//currentRow = samplePoints.get(i);
 			for(int j = 0; j < gridData[0].length; j++)
 			{
-				// Broken implementation here
-				weights[i][j] = gridData[i][j];
+				weights[weightCount][j] = gridData[i][j];
 				System.out.print("" + gridData[i][j] + " ");
 			}
 			System.out.println();
