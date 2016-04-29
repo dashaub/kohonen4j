@@ -208,6 +208,9 @@ public class SOM extends Grid
 	 * */
 	private void init()
 	{
+		// Scale the Grid
+		this.scaleGrid();
+		
 		// Prepare the array for 
 		// calculating pair distances
 		pairArray = new double[xDim * yDim][2];
@@ -216,15 +219,16 @@ public class SOM extends Grid
 		{
 			for(int j = 0; j < yDim; j++)
 			{
-				pairArray[count][0] = i;
-				pairArray[count][1] = j;
+				this.pairArray[count][0] = i;
+				this.pairArray[count][1] = j;
 				count++;
 			}
 		}
 		
 		// Useful variables
-		int pairRows = pairArray.length;
-		int dataRows = gridData.length;
+		int pairRows = this.pairArray.length;
+		int dataRows = this.gridData.length;
+		
 		
 		// Sample from the data to determine
 		// which observations to use
@@ -234,28 +238,20 @@ public class SOM extends Grid
 		{
 			samplePoints.add((int)(Math.random() * dataRows));
 		}
-		System.out.println(samplePoints);
 		Integer [] sampleIndex = samplePoints.toArray(new Integer[samplePoints.size()]);
 		
 		// Use the selected rows to build the starting weights
-		System.out.println("pairRows:" + pairRows);
-		System.out.println(gridData[0].length);
 		weights = new double[pairRows][gridData[0].length];
 		int weightCount = 0;
-		System.out.println("Here is the grid");
-		//System.out.println(this);
+		// Select the rows from sampleIndex
 		for(Integer i : sampleIndex)
 		{
-			System.out.println("Selecting row " + i);
-			System.out.println("Number of rows " + gridData.length);
-			//currentRow = samplePoints.get(i);
+			// Select all the columns in the row
 			for(int j = 0; j < gridData[0].length; j++)
 			{
 				weights[weightCount][j] = gridData[i][j];
-				System.out.print("" + gridData[i][j] + " ");
 			}
-			System.out.println();
+			weightCount++;
 		}
 	}
-	//Grid distGrid = new Grid(pairArray).distance();
 }
