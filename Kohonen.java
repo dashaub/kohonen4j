@@ -110,23 +110,8 @@ public class Kohonen extends JFrame
 				for(int i = 0; i < numColumns; i++)
 				{
 					currentRow[i] = Double.parseDouble(parser.next());
-					System.out.print("" + currentRow[i] + " ");
 				}
 				inputData.add(currentRow);
-				//inputData.add(Collections.addAll(new ArrayList <Double []>(), currentRow));
-				//inputData.add(Arrays.copyOf(currentRow));
-				// Fill the array
-				//inputData.add(new Double[numColumns]);
-				/**
-				 * Failed attempt at adding an empty array
-				 * and updating 
-				for(int j = 0; j < currentRow.length; j++)
-				{
-					inputData.set(rowNum)[j] = currentRow[j];
-				}
-				rowNum++;
-				* */
-				System.out.println();
 			}
 			// Ensure the data are parsed to numeric
 			catch(NumberFormatException nfe)
@@ -154,23 +139,14 @@ public class Kohonen extends JFrame
 		Double [] tmpArray;
 		for(int i = 0; i < inputData.size(); i++)
 		{
-			System.out.println("i " + i);
-			//System.out.println(inputData.get(i));
 			tmpArray = inputData.get(i);
 			for(int j = 0; j < numColumns; j++)
 			{
-				System.out.println("" + tmpArray[j] + ", ");
 				validData[i][j] = tmpArray[j];
-				//System.out.print("" + validData[i][j] + ", ");
 			}
-			System.out.println();
 		}
 		
 		// Convert to a grid object
-		//trainData = new Grid(validData);
-		System.out.println("Grid successful");
-		//trainData = trainData.scaleGrid;
-		System.out.println("Grid scaled");
 		int xVal;
 		int yVal;
 		int epochVal;
