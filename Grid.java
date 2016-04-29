@@ -151,14 +151,14 @@ public class Grid
 	 * */
 	public boolean zeroVariance()
 	{
-		double[] currentColumn = new double[gridData.length];
+		double[] currentColumn = new double[this.gridData.length];
 		// Test each column
-		for(int i = 0; i < gridData[0].length; i++)
+		for(int i = 0; i < this.gridData[0].length; i++)
 		{
 			// Extract the rows
-			for(int j = 0; j < gridData.length; j++)
+			for(int j = 0; j < this.gridData.length; j++)
 			{
-				currentColumn[j] = gridData[i][j];
+				currentColumn[j] = this.gridData[j][i];
 			}
 			if(variance(currentColumn) == 0)
 			{
@@ -215,10 +215,9 @@ public class Grid
 			// Perform the scaling down the rows
 			for(int k = 0; k < currentColumn.length; k ++)
 			{
-				gridData[k][j] = (currentColumn[k] - colMean) / colVar;
+				gridData[k][j] = (currentColumn[k] - colMean) / Math.sqrt(colVar);
 			}
 		}
-		System.out.println("Scaled successfully");
 	}
 	
 	
