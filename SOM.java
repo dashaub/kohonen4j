@@ -28,7 +28,7 @@ public class SOM extends Grid
 	private int xDim;
 	private int yDim;
 	private int epochs;
-	private double [][] pairArray;
+	private int [][] pairArray;
 	private double [][] weights;
 	
 	public SOM(double[][] matrix, int xDim, int yDim, int epochs)
@@ -60,7 +60,9 @@ public class SOM extends Grid
 		// Number of columns in the training data
 		int dataColumns = this.gridData[0].length;
 		// Number of rows (same number of columns) in the weights map
-		int weightsRows = this.weights[0].length;
+		int weightsRows = this.weights.length;
+		// Number of columns in the weights map
+		int weightsColumns = this.weights[0].length;
 		// Number of rounds of training
 		int iterations = this.epochs * dataRows;
 		// Initial learning rate
@@ -70,7 +72,6 @@ public class SOM extends Grid
 		
 		// Current row being processed
 		int currentObs;
-		//int nearestNode;
 		// Nearest node to the current point
 		int nearest = 0;
 		// Smallest identified distance to a node
@@ -82,32 +83,48 @@ public class SOM extends Grid
 		
 		// "Unpack" the gridData, weights, and pair distances into a 1D array
 		double [] data = new double[dataRows * dataColumns];
-		double [] nodes = new double[weightsRows * weightsRows];
-		double [] distPairs = new double[pairArray.length * pairArray[0].length];
+		double [] nodes = new double[weightsRows * weightsColumns];
+		double [] distPairs = new double[pairArray.length * pairArray.length];
 		int count = 0;
-		for(int i = 0; i < dataRows; i++)
+		for(int i = 0; i < dataColumns; i++)
 		{
-			for(int j = 0; j < dataColumns; j++)
+			for(int j = 0; j < dataRows; j++)
 			{
-				data[count] = this.gridData[i][j];
+				data[count] = this.gridData[j][i];
 				count++;
 			}
 		}
 		count = 0;
-		for(int i = 0; i < weightsRows; i++)
+		for(int i = 0; i < weightsColumns; i++)
 		{
 			for(int j = 0; j < weightsRows; j++)
 			{
-				nodes[count] = this.weights[i][j];
+				nodes[count] = this.weights[j][i];
 				count++;
 			}
 		}
 		count = 0;
+		System.out.println("pairArray.length: " + pairArray.length);
+		System.out.println("pairArray[0].length: " + pairArray[0].length);
+		int currentX;
+		int currentY;
+		double xDist;
+		double yDist;
 		for(int i = 0; i < this.pairArray.length; i++)
 		{
-			for(int j = 0; j < this.pairArray[0].length; j++)
+			// Set the reference point to the current row
+			currentX = this.pairArray[i][0];
+			currentY = this.pairArray[i][1];
+			for(int j = 0; j < this.pairArray.length; j++)
 			{
-				distPairs[count] = this.pairArray[i][j];
+				// Calculate the rectilinear distances from this point
+				// to the reference point
+				for(int k = 0; k < 2; k++)
+				{
+					xDist = Math.abs(this.pairArray[j][0] - currentX);
+					yDist = Math.abs(this.pairArray[j][1] - currentY);
+					distPairs[count] = xDist + yDist;
+				}
 				count++;
 			}
 		}
@@ -118,24 +135,31 @@ public class SOM extends Grid
 		neighborhood = 1.75 * variance(distPairs);
 		
 		// Adapted from the C code for VR_onlineSOM in the R "class" package
+		System.out.println("iterations: " + iterations);
+		System.out.println("dataRows: " + dataRows);
+		System.out.println("dataColumns: " + dataColumns);
+		System.out.println("nodes.length: " + nodes.length);
+		System.out.println("data.length: " + data.length);
+		System.out.println("weightsRows: " + weightsRows);
+		System.out.println("weights.length: " + weights.length);
+		System.out.println("weights[0].length:" + weights[0].length);
 		for(int i = 0; i < iterations; i++)
 		{
+			System.out.println(i + " of " + iterations);
 			// Choose a random observation for fitting
 			currentObs = (int)(Math.random() * dataRows);
-			System.out.println("Using observation " + currentObs);
+			//System.out.println("Using observation " + currentObs);
 			// Find its nearest node
 			// Start with the maximum distance possible
-			//nearestNode = 0;
-			//nearestDistance = 1.7976931348623157E308;
 			nearestDistance = Double.MAX_VALUE;
-			for(int j = 0; j < dataRows; j++)
+			nearest = 0;
+			for(int j = 0; j < weightsRows; j++)
 			{
 				// Reset the distance to zero for the next training point
 				dist = 0;
 				for(int k = 0; k < dataColumns; k++)
 				{
-					System.out.println("node length: " + nodes.length);
-					System.out.println("i:" + i + " j:" + j + "k:" + k);
+					//System.out.println("i:" + i + " j:" + j + " k:" + k);
 					// For the current random observation and the current column,
 					// find the difference, i.e. the rectilinear distance
 					tmp = data[currentObs + k * dataRows] - nodes[j + k * weightsRows];
@@ -161,8 +185,8 @@ public class SOM extends Grid
 			// neighborhood as well); as training
 			// continues create smaller distortions and apply
 			// them within a smaller neighborhood.
-			learningRate -= 0.04 * i / iterations;
-			neighborhood -= 1.0 * i / iterations;
+			learningRate -= (0.04 * i / iterations);
+			neighborhood -= (1.0 * i / iterations);
 			// Prevent the neighborhood from becoming too small
 			neighborhood = (neighborhood < 0.5) ? 0.5 : neighborhood;
 			
@@ -170,16 +194,28 @@ public class SOM extends Grid
 			// the neighborhood
 			for(int l = 0; l < weightsRows; l++)
 			{
+				//System.out.println("l: " + l);
 				if(distPairs[l + weightsRows * nearest] <= neighborhood)
 				{
 					for(int m = 0; m < dataColumns; m++)
 					{
+						//System.out.println("m: " + m);
 						tmp = data[currentObs + m * dataRows] - nodes[l + m * weightsRows];
-						nodes[l + m * weightsRows] += tmp * learningRate;
+						nodes[l + m * weightsRows] += (tmp * learningRate);
 					}
 				}
 			}
 		}
+		/**
+
+		for(int i = 0; i < weights.length; i++)
+		{
+			for(int j = 0; j < weights[0].length; j++)
+			{
+				System.out.println("" + weights[i][j]);
+			}
+		}
+		* */
 		
 		/**
 		// Prepare the output grid for 
@@ -195,6 +231,28 @@ public class SOM extends Grid
 		}
 		* */
 		//return new Grid(pairArray);
+		
+		// Adapted from the C code for mapKohonen in the R "kohonen" package
+		// Now calculate the weights/data to map distance
+		count = 0;
+		double [] mapDist = new double[dataRows * weightsRows];
+		// Loop over all data points
+		for(int i = 0; i < dataRows; i++)
+		{
+			// Loop over all the map nodes
+			for(int j = 0; j < weightsRows; j++)
+			{
+				mapDist[count] = 0;
+				// Loop over all the variable
+				for(int k = 0; k < weightsColumns; k++)
+				{
+					tmp = data[i + k * dataRows] - nodes[j + k * weightsRows];
+					mapDist[count] += tmp * tmp;	
+				}
+				count++;
+			}
+		}
+		System.out.println("Training complete. Here are the codes");
 	}
 	
 	
@@ -213,11 +271,11 @@ public class SOM extends Grid
 		
 		// Prepare the array for 
 		// calculating pair distances
-		pairArray = new double[xDim * yDim][2];
+		pairArray = new int[this.xDim * this.yDim][2];
 		int count = 0;
-		for(int i = 0; i < xDim; i++)
+		for(int i = 0; i < this.xDim; i++)
 		{
-			for(int j = 0; j < yDim; j++)
+			for(int j = 0; j < this.yDim; j++)
 			{
 				this.pairArray[count][0] = i;
 				this.pairArray[count][1] = j;
