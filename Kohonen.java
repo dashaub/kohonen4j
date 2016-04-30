@@ -193,6 +193,8 @@ public class Kohonen extends JFrame
 				int result = fc.showOpenDialog(null);
 				if (result == fc.APPROVE_OPTION)
 				{
+					// Ensure the ArrayList is empty, e.g. user loads a file after first one failed
+					inputData.clear();
 					File inputFile = fc.getSelectedFile();
 					readFile(inputFile);
 				}
