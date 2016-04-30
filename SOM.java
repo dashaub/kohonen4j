@@ -55,6 +55,40 @@ public class SOM extends Grid
 	
 	
 	/**
+	 * Getter method for finalDistances.
+	 * 
+	 * This method returns the final distances
+	 * to the assigned node for each observation
+	 * after training.
+	 * 
+	 * @return An array with the distance
+	 * to the assigned node for each observation
+	 * 
+	 * */
+	 public double [] getDistances()
+	 {
+		 return this.finalDistances;
+	 }
+	 
+	 
+	 /**
+	 * Getter method for finalNodes.
+	 * 
+	 * This method returns the final node
+	 * labels assigned to each observation
+	 * after training
+	 * 
+	 * @return An array with the node labels
+	 * for each observation
+	 * 
+	 * */
+	 public int [] getNodes()
+	 {
+		 return this.finalNodes;
+	 }
+	
+	
+	/**
 	 * Train the SOM to the data.
 	 * This method runs the training
 	 * algorithm to fit the self-organizing
@@ -113,8 +147,6 @@ public class SOM extends Grid
 			}
 		}
 		count = 0;
-		System.out.println("pairArray.length: " + pairArray.length);
-		System.out.println("pairArray[0].length: " + pairArray[0].length);
 		int currentX;
 		int currentY;
 		double xDist;
@@ -128,12 +160,9 @@ public class SOM extends Grid
 			{
 				// Calculate the rectilinear distances from this point
 				// to the reference point
-				for(int k = 0; k < 2; k++)
-				{
-					xDist = Math.abs(this.pairArray[j][0] - currentX);
-					yDist = Math.abs(this.pairArray[j][1] - currentY);
-					distPairs[count] = xDist + yDist;
-				}
+				xDist = Math.abs(this.pairArray[j][0] - currentX);
+				yDist = Math.abs(this.pairArray[j][1] - currentY);
+				distPairs[count] = xDist + yDist;
 				count++;
 			}
 		}
@@ -144,20 +173,10 @@ public class SOM extends Grid
 		neighborhood = 1.75 * variance(distPairs);
 		
 		// Adapted from the C code for VR_onlineSOM in the R "class" package
-		System.out.println("iterations: " + iterations);
-		System.out.println("dataRows: " + dataRows);
-		System.out.println("dataColumns: " + dataColumns);
-		System.out.println("nodes.length: " + nodes.length);
-		System.out.println("data.length: " + data.length);
-		System.out.println("weightsRows: " + weightsRows);
-		System.out.println("weights.length: " + weights.length);
-		System.out.println("weights[0].length:" + weights[0].length);
 		for(int i = 0; i < iterations; i++)
 		{
-			//System.out.println(i + " of " + iterations);
 			// Choose a random observation for fitting
 			currentObs = (int)(Math.random() * dataRows);
-			//System.out.println("Using observation " + currentObs);
 			// Find its nearest node
 			// Start with the maximum distance possible
 			nearestDistance = Double.MAX_VALUE;
@@ -168,21 +187,18 @@ public class SOM extends Grid
 				dist = 0;
 				for(int k = 0; k < dataColumns; k++)
 				{
-					//System.out.println("i:" + i + " j:" + j + " k:" + k);
 					// For the current random observation and the current column,
-					// find the difference, i.e. the rectilinear distance
+					// find the difference
 					tmp = data[currentObs + k * dataRows] - nodes[j + k * weightsRows];
 					// dist^2 is the square of the sums of
 					// all the individual components, and
 					// minimizing distance^2 leads to the same
 					// node as minimizing distance.
-					dist += tmp * tmp;
-					//System.out.println("" + dist);
+					dist += (tmp * tmp);
 				}
 				// New closest node found
 				if(dist < nearestDistance)
 				{
-					//nearestNode = 0;
 					// Update the nearest node and distance
 					nearest = j;
 					nearestDistance = dist;
@@ -198,13 +214,12 @@ public class SOM extends Grid
 			learningRate -= (0.04 * i / iterations);
 			neighborhood -= (1.0 * i / iterations);
 			// Prevent the neighborhood from becoming too small
-			neighborhood = (neighborhood < 0.5) ? 0.5 : neighborhood;
+			//neighborhood = (neighborhood < 0.5) ? 0.5 : neighborhood;
 			
 			// Apply the distortion to the map for nodes within
 			// the neighborhood
 			for(int l = 0; l < weightsRows; l++)
 			{
-				//System.out.println("l: " + l);
 				if(distPairs[l + weightsRows * nearest] <= neighborhood)
 				{
 					for(int m = 0; m < dataColumns; m++)
@@ -213,6 +228,7 @@ public class SOM extends Grid
 						tmp = data[currentObs + m * dataRows] - nodes[l + m * weightsRows];
 						//System.out.println("" + tmp);
 						nodes[l + m * weightsRows] += (tmp * learningRate);
+						//System.out.println("" + nodes[l + m * weightsRows]);
 					}
 				}
 			}
@@ -258,7 +274,8 @@ public class SOM extends Grid
 				{
 					tmp = data[i + k * dataRows] - nodes[j + k * weightsRows];
 					//System.out.println("" + tmp);
-					mapDist[count] += tmp * tmp;	
+					//System.out.println(nodes[j + k * weightsRows]);
+					mapDist[count] += (tmp * tmp);	
 					//System.out.println(mapDist[count]);
 				}
 				count++;
@@ -268,7 +285,7 @@ public class SOM extends Grid
 		
 		// Represent the map distances as the original matrix
 		count = 0;
-		double [][] distanceMatrix = new double [dataRows][dataColumns];
+		double [][] distanceMatrix = new double [dataRows][weightsRows];
 		for(int i = 0; i < dataRows; i++)
 		{
 			for(int j = 0; j < dataColumns; j++)
