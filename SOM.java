@@ -25,19 +25,19 @@
 import java.util.*;
 public class SOM extends Grid
 {
-	// x dimension of the map
+	// X dimension of the map
 	private int xDim;
-	// y dimension of the map
+	// Y dimension of the map
 	private int yDim;
-	// number of trianing rounds
+	// Number of trianing rounds
 	private int epochs;
-	// ordered pairs for all the points on the map
+	// Ordered pairs for all the points on the map
 	private int [][] pairArray;
-	// weights fitted during training
+	// Weights fitted during training
 	private double [][] weights;
-	// final node assigned to each observation in training
+	// Final node assigned to each observation in training
 	private int finalNodes[];
-	// the disance from each data point to the final node
+	// The disance from each data point to the final node
 	private double finalDistances[];
 	
 	public SOM(double[][] matrix, int xDim, int yDim, int epochs)
@@ -127,7 +127,7 @@ public class SOM extends Grid
 		// "Unpack" the gridData, weights, and pair distances into a 1D array
 		double [] data = new double[dataRows * dataColumns];
 		double [] nodes = new double[weightsRows * weightsColumns];
-		double [] distPairs = new double[pairArray.length * pairArray.length];
+		double [] distPairs = new double[this.pairArray.length * this.pairArray.length];
 		int count = 0;
 		for(int i = 0; i < dataColumns; i++)
 		{
@@ -213,50 +213,23 @@ public class SOM extends Grid
 			// them within a smaller neighborhood.
 			learningRate -= (0.04 * i / iterations);
 			neighborhood -= (1.0 * i / iterations);
-			// Prevent the neighborhood from becoming too small
-			//neighborhood = (neighborhood < 0.5) ? 0.5 : neighborhood;
 			
 			// Apply the distortion to the map for nodes within
 			// the neighborhood
 			for(int l = 0; l < weightsRows; l++)
 			{
+				// Apply if the distance to the other node is within the neighborhood
 				if(distPairs[l + weightsRows * nearest] <= neighborhood)
 				{
+					// Apply to all columns in this row
 					for(int m = 0; m < dataColumns; m++)
 					{
-						//System.out.println("m: " + m);
 						tmp = data[currentObs + m * dataRows] - nodes[l + m * weightsRows];
-						//System.out.println("" + tmp);
 						nodes[l + m * weightsRows] += (tmp * learningRate);
-						//System.out.println("" + nodes[l + m * weightsRows]);
 					}
 				}
 			}
 		}
-		/**
-
-		for(int i = 0; i < weights.length; i++)
-		{
-			for(int j = 0; j < weights[0].length; j++)
-			{
-				System.out.println("" + weights[i][j]);
-			}
-		}
-		* */
-		
-		/**
-		// Prepare the output grid for 
-		// calculating pair distances
-		pairArray = new double[xDim][2];
-		for(int i = 0; i < xDim; i++);
-		{
-			for(int j = 0; j < yDim; j++)
-			{
-				pairArray[xDim][0] = xDim;
-				pairArray[xDim][1] = yDim;
-			}
-		}
-		* */
 		
 		// Adapted from the C code for mapKohonen in the R "kohonen" package
 		// Now calculate the weights/data to map distance
@@ -273,26 +246,21 @@ public class SOM extends Grid
 				for(int k = 0; k < weightsColumns; k++)
 				{
 					tmp = data[i + k * dataRows] - nodes[j + k * weightsRows];
-					//System.out.println("" + tmp);
-					//System.out.println(nodes[j + k * weightsRows]);
 					mapDist[count] += (tmp * tmp);	
-					//System.out.println(mapDist[count]);
 				}
 				count++;
 			}
 		}
-		System.out.println(count);
 		
 		// Represent the map distances as the original matrix
 		count = 0;
 		double [][] distanceMatrix = new double [dataRows][weightsRows];
 		for(int i = 0; i < dataRows; i++)
 		{
-			for(int j = 0; j < dataColumns; j++)
+			for(int j = 0; j < weightsRows; j++)
 			{
 				distanceMatrix[i][j] = mapDist[count];
 				count++;
-				//System.out.println(mapDist[count]);
 			}
 		}
 		
@@ -308,8 +276,7 @@ public class SOM extends Grid
 			count = 0;
 			nodeIndex = count;
 			minDistance = Double.MAX_VALUE;
-			//minDistance = 40000000;
-			for(int j = 0; j < dataColumns; j++)
+			for(int j = 0; j < weightsRows; j++)
 			{
 				if(distanceMatrix[i][j] < minDistance)
 				{
@@ -321,12 +288,10 @@ public class SOM extends Grid
 			finalNodes[i] = nodeIndex;
 			finalDistances[i] = minDistance;
 		}
-		System.out.println("Training complete. Here are the nodes and distances");
-		
-		for(int i = 0; i < finalNodes.length; i++)
-		{
-			System.out.println("node: " + finalNodes[i] + "\t distance: " + finalDistances[i]);
-		}
+		//for(int i = 0; i < finalNodes.length; i++)
+		//{
+			//System.out.println("node: " + finalNodes[i] + "\t distance: " + finalDistances[i]);
+		//}
 	}
 	
 	
