@@ -195,19 +195,19 @@ public class Grid
 		{
 			return;
 		}
-		int nrows = gridData.length;
-		int ncols = gridData[0].length;
+		int nrows = this.gridData.length;
+		int ncols = this.gridData[0].length;
 		double colMean;
 		double colVar;
 		ArrayList <Double[]> result = new ArrayList <Double[]>();
 		double[] currentColumn = new double[nrows];
 		// Repeat for every column
-		for(int j = 0; j < gridData[0].length; j++)
+		for(int j = 0; j < this.gridData[0].length; j++)
 		{
 			// Find the mean and variance for the current column
-			for(int i = 0; i < gridData.length; i++)
+			for(int i = 0; i < this.gridData.length; i++)
 			{
-				currentColumn[i] = gridData[i][j];
+				currentColumn[i] = this.gridData[i][j];
 			}
 			colMean = mean(currentColumn);
 			colVar = variance(currentColumn);
@@ -275,42 +275,15 @@ public class Grid
 	 {
 		 String s = "";
 		 // Traverse the current row
-		 for(int i = 0; i < gridData.length; i++)
+		 for(int i = 0; i < this.gridData.length; i++)
 		 {
 			 // Traverse all the columns
-			 for(int j = 0; j < gridData[0].length; j++)
+			 for(int j = 0; j < this.gridData[0].length; j++)
 			 {
-				 s += (gridData[i][j]+ " ");
+				 s += (this.gridData[i][j]+ " ");
 			 }
 			 s += "\n";
 		 }
 		 return s;
 	 }
-	
-	
-	/**
-	 * Transpose an array
-	 * This method transposes an array
-	 * 
-	 * @param matrix The array to transpose
-	 * 
-	 * @return The transposed array
-	 * 
-	 * */
-	// Adapted from http://stackoverflow.com/questions/26197466/transposing-a-matrix-from-a-2d-array
-	public double[][] transpose(double [][] matrix)
-	{
-		int m = matrix.length;
-		int n = matrix[0].length;
-		double[][] trasposedMatrix = new double[n][m];
-		for(int x = 0; x < n; x++)
-		{
-			for(int y = 0; y < m; y++)
-			{
-				trasposedMatrix[x][y] = matrix[y][x];
-			}
-		}
-		System.out.println("Transpose successful");
-		return trasposedMatrix;	
-	}
 }
