@@ -1,6 +1,7 @@
 ## [Unreleased]
 ### Added
-- Reference manual
+- Added Reference manual
+- Added TODO.md
 
 ## [1.1.0] - 2016-05-02
 ### Added
