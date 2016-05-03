@@ -1,3 +1,6 @@
+## [Unreleased]
+### Added
+- Reference manual
 
 ## [1.1.0] - 2016-05-02
 ### Added
