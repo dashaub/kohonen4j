@@ -32,7 +32,7 @@
  * displaying the results.
  * 
  * @author David Shaub
- * @version 1.0.0
+ * @version 1.1.0
  * 
  * */
  
@@ -222,7 +222,7 @@ public class Kohonen extends JFrame
 		 //double aspectRatio = (double)xdim / yDim;
 		 String col = colorBox.getSelectedItem().toString();
 		 map.setSize(800, 600);
-		 map.setLayout (new GridLayout(xDim, yDim));
+		 map.setLayout (new GridLayout(yDim, xDim));
 		 
 		 // Plot the counts
 		 JButton [] jB = new JButton[counts.length];
@@ -230,24 +230,38 @@ public class Kohonen extends JFrame
 		 float r = 0;
 		 float g = 0;
 		 float b = 0;
+		 // Fill top to bottom, left to right
+		 // instead of left to right, top to bttom
+		 int index;
+		 int columnCount = 0;
 		 for(int i = 0; i < counts.length; i++)
 		 {
+			 // Calculuate the element to use since we're
+			 // filling from top to bottom, left to right
+			 index = (i / xDim) + columnCount * yDim;
+			 // Get the RGB values
 			 if(col.equals("Red"))
 			 {
-				 r = (float)counts[i] / maxCount;
+				 r = (float)counts[index] / maxCount;
 			 }
 			 else if(col.equals("Green"))
 			 {
-				 g = (float)counts[i] / maxCount;
+				 g = (float)counts[index] / maxCount;
 			 }
 			 else
 			 {
-				 b = (float)counts[i] / maxCount;
+				 b = (float)counts[index] / maxCount;
 			 }
-			 jB[i] = new JButton("");
-			 jB[i].setBackground(new Color(r, g, b));
-			 jB[i].setOpaque(true);
-			 map.add(jB[i]);
+			 jB[index] = new JButton("");
+			 jB[index].setBackground(new Color(r, g, b));
+			 jB[index].setOpaque(true);
+			 map.add(jB[index]);
+			 columnCount++;
+			 // Reset the column count if it grows too large
+			 if(columnCount >= xDim)
+			 {
+				 columnCount = 0;
+			 }
 		 }
 		 map.setVisible(true); 
 	 }
@@ -280,12 +294,16 @@ public class Kohonen extends JFrame
 	
 	public Kohonen()
 	{
-		//Construct the JFrame
-		JFrame window = new JFrame("Self-Organizing Map");
-		window.setSize (650, 200);
-		window.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+		// Create a frame for the background picture and the input
+		JFrame fullWindow = new JFrame("kohonen4j: Self-Organizing Maps in Java");
+		fullWindow.setSize (650, 245);
+		fullWindow.setResizable(false);
+		fullWindow.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+		
+		//Construct the JPanel for the parameters and input
+		JPanel window = new JPanel();
 		window.setLayout(new FlowLayout());
-		window.setResizable(false);
+		
 		
 		//Color
 		JLabel colorLabel = new JLabel("Shading");
@@ -314,7 +332,21 @@ public class Kohonen extends JFrame
 		fileChooser.addActionListener(bl);
 		window.add(fileChooser);
 		
-		window.setVisible (true);
+		// Background picture
+		JLabel background;
+		try
+		{
+			background = new JLabel(new ImageIcon(javax.imageio.ImageIO.read(new File("background.jpg"))));
+			fullWindow.add(background, BorderLayout.SOUTH);
+		}
+		catch(IOException e)
+		{
+		}
+		
+		
+		fullWindow.add(window, BorderLayout.NORTH);
+		//window.setVisible(true);
+		fullWindow.setVisible(true);
 	}
 	
 	
