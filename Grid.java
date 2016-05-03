@@ -30,7 +30,7 @@
  * two columns and must have at least as many rows as columns.
  * 
  * @author David Shaub
- * @version 1.0.0
+ * @version 1.1.0
  * 
  * */
  
@@ -258,7 +258,6 @@ public class Grid
 					 yDist = Math.abs(this.getObs(currentObs, 1) - this.getObs(j, 1));
 					 distances[i][j] = Math.max(xDist, yDist);
 				 }
-
 			 }
 		 } 
 		 return new Grid(distances);
