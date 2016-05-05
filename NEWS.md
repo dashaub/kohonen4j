@@ -2,6 +2,7 @@
 ### Added
 - Added Reference manual
 - Added TODO.md
+- Added VIGNETTE.md
 
 ## [1.1.0] - 2016-05-02
 ### Added
