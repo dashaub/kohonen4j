@@ -12,15 +12,15 @@ First, a 2D N x M grid is selected as the map. This grid is initialized with ran
 ## Implementation
 The kohonen4j program allows the user to quickly load data, specify the map dimensions, and plot the resulting map cell counts. Many refinements to the Kohonen network can be made—from the step update size to the network geometry, distance measure, learning rate, neighborhood radius, and initialization method—but these are not the focus of kohonen4j. Some of these extensions could be incorporated fairly easily: the train() method in the SOM class already calculates node distances, so all that is needed for plotting this measure of network quality is a scaling method for the distances and an approach for visualization. Regardless, the program seeks solely to meet the need of assessing the appropriate network map size and training epochs. Using the produced diagnostic plot, the user can then adjust the size of the map to select an optimal map result for that particular dataset. The graphics below were created in the statistical software R and illustrate the cases of underfit, overfit, and reasonable map size on the “wines” dataset included in the “kohonen” package. This data has variables such as alcohol content, magnesium levels, malic acid strength, flavanoid content, etc. The first graph shows a network with far too many cells. Empty cells are represented with gray. The training set data consists of 177 observations with 13 predictors. Since this was applied to a 10 x 10 map, we would expect on average 1.7 observations per cell, and some cells would be empty by chance. However, with useful predictors carrying clustering information we would expect even more empty cells as we see below.
 
-![alt text](overFit "Example of an overfit map")
+![alt text](img/overfit.png "Example of an overfit map")
 
 In contrast to the map above that overfits the data, the map below underfits the data: we have destroyed many useful clusters by forcing the data into one of only four possible nodes. The extremely high count per node indicates utility in splitting these into additional useful clusters by increasing the dimensionality of our map to something larger than 2 x 2.
 
-![alt text](underFit "Example of an underfit map")
+![alt text](img/underfit.img "Example of an underfit map")
 
 Finally, the 5 x 5 network below is closer to an ideal size. One cell is empty, so perhaps our network is slightly too larger, but the distribution otherwise is neither too sparse nor dense. Although the networks above are square, the only requirement for a Kohonen network with rectangular node geometry is a rectangular layout.
 
-![alt text](idealFit "Example of an well-fit map")
+![alt text](/img/som.png "Example of an well-fit map")
 
 The graphs above created in R provided a template for the graphics in kohonen4j. The kohonen4j user interface is shown below.
 
