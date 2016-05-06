@@ -4,10 +4,10 @@ Self-Organizing Maps in Java
 
 For a more detailed description of self-organizing maps and the program design of kohonen4j, consider reading the [vignette](VIGNETTE.md).
 
-![alt text](https://github.com/dashaub/kohonen4j/blob/master/GUI.png "User interface for constructing the Kohonen network")
+![alt text](GUI.png "User interface for constructing the Kohonen network")
 
 The kohonen4j fits a [self-organizing map](https://en.wikipedia.org/wiki/Self-organizing_map), a type of artificial neural network, to an input csv data file. The input csv must be rectangular and nonjagged with only numeric values. As output, the program plots a heatmap that displays a 2D representation of the data. Observations are maped to their closest nodes, and the output plot displays the most frequently mapped nodes in the brightest shade, while nodes that are not maped to any observations are black.
-![alt text](https://github.com/dashaub/kohonen4j/blob/master/output.png "Output from a trained network on a 5x5 map")
+![alt text](output.png "Output from a trained network on a 5x5 map")
 
 For training and plotting to succeed, the data must have at least two observations, at least two columns, and no more columns than rows. Furthermore, the dimensions for the training grid and epochs must be positive integers. Training on large grids or datasets and with a large number of epochs can be quite slow. 
 
