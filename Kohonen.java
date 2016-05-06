@@ -338,7 +338,7 @@ public class Kohonen extends JFrame
 		{
 			// Converted to jpg from the CC 3.0 content at
 			// https://en.wikipedia.org/wiki/Self-organizing_map#/media/File:Somtraining.svg
-			background = new JLabel(new ImageIcon(javax.imageio.ImageIO.read(new File("background.jpg"))));
+			background = new JLabel(new ImageIcon(javax.imageio.ImageIO.read(new File("img/background.jpg"))));
 			fullWindow.add(background, BorderLayout.SOUTH);
 		}
 		catch(IOException e)
