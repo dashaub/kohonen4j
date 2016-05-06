@@ -20,7 +20,7 @@ In contrast to the map above that overfits the data, the map below underfits the
 
 Finally, the 5 x 5 network below is closer to an ideal size. One cell is empty, so perhaps our network is slightly too larger, but the distribution otherwise is neither too sparse nor dense. Although the networks above are square, the only requirement for a Kohonen network with rectangular node geometry is a rectangular layout.
 
-![alt text](/img/som.png "Example of an well-fit map")
+![alt text](img/som.png "Example of an well-fit map")
 
 The graphs above created in R provided a template for the graphics in kohonen4j. The kohonen4j user interface is shown below.
 
