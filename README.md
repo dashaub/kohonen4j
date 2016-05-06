@@ -2,6 +2,8 @@
 # kohonen4j
 Self-Organizing Maps in Java
 
+For a more detailed description of self-organizing maps and the program design of kohonen4j, consider reading the [vignette](VIGNETTE.md).
+
 ![alt text](https://github.com/dashaub/kohonen4j/blob/master/GUI.png "User interface for constructing the Kohonen network")
 
 The kohonen4j fits a [self-organizing map](https://en.wikipedia.org/wiki/Self-organizing_map), a type of artificial neural network, to an input csv data file. The input csv must be rectangular and nonjagged with only numeric values. As output, the program plots a heatmap that displays a 2D representation of the data. Observations are maped to their closest nodes, and the output plot displays the most frequently mapped nodes in the brightest shade, while nodes that are not maped to any observations are black.
