@@ -94,7 +94,7 @@ public class Grid
 	 }
 	
 	/**
-	 * Calculuate the mean of an array
+	 * Calculate the mean of an array
 	 * This method returns the mean of 
 	 * an input array.
 	 * 
@@ -115,8 +115,8 @@ public class Grid
 	
 	
 	/**
-	 * Calculuate the variance of an array
-	 * This method returns the variance of 
+	 * Calculate the variance of an array
+	 * This method returns the variance of
 	 * an input array. A sample-size correction
 	 * is not used.
 	 * 
@@ -222,7 +222,7 @@ public class Grid
 	
 	
 	/**
-	 * Calculuate the pair-wise distances
+	 * Calculate the pair-wise distances
 	 * between all points on the output Kohonen
 	 * grid. The maximum, rectilinear distance
 	 * is used with a rectangular geometry grid.
@@ -232,7 +232,7 @@ public class Grid
 	 * pair in the implicit argument Grid to all of the other
 	 * points. The second row of the output Grid similarly
 	 * contains the distances to all the other points from
-	 * the second point in the implicit argumetn Grid, etc.
+	 * the second point in the implicit argument Grid, etc.
 	 * 
 	 * @return A grid object representing the pairwise
 	 * distances
