@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Visualize cell counts of a rectangular 
- * self-organizing map. Thie program fits
+ * self-organizing map. This program fits
  * a Kohonen network to an input containing
  * numeric data in a csv format.
  * 
@@ -27,7 +27,7 @@
  * the main method and constructs the necessary
  * windows for user input as well as reading in
  * the data and validating it. It then passes
- * the necesary data onto a SOM object where
+ * the necessary data onto a SOM object where
  * the model fitting is performed before
  * displaying the results.
  * 

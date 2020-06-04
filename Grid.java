@@ -19,7 +19,7 @@
  * 
  * 
  * This class contains methods for representing
- * non-jagged, rectancular data arrays. Useful
+ * non-jagged, rectangular data arrays. Useful
  * methods such as mean, variance, and transpose
  * are defined. Since input validation is specific
  * for the Kohonen application, error handling and 
