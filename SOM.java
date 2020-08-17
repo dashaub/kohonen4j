@@ -52,6 +52,28 @@ public class SOM extends Grid
 		this.yDim = yDim;
 		this.epochs = epochs;
 	}
+
+	/**
+	 * Getter method for xDim.
+	 *
+	 * @return the X dimension of the map.
+	 *
+	 * */
+	public int getXDim()
+	{
+		return this.xDim;
+	}
+
+	/**
+	 * Getter method for yDim.
+	 *
+	 * @return the Y dimension of the map.
+	 *
+	 * */
+	public int getYDim()
+	{
+		return this.yDim;
+	}
 	
 	
 	/**
@@ -109,7 +131,7 @@ public class SOM extends Grid
 		// Number of rounds of training
 		int iterations = this.epochs * dataRows;
 		// Initial learning rate
-		double learningRate = 0.05;
+		double learningRate = 0.5;
 		// Initial neighborhood size
 		double neighborhood;
 		
@@ -124,29 +146,9 @@ public class SOM extends Grid
 		double dist;
 		double tmp;
 		
-		// "Unpack" the gridData, weights, and pair distances into a 1D array
-		double [] data = new double[dataRows * dataColumns];
-		double [] nodes = new double[weightsRows * weightsColumns];
+		// "Unpack" the pair distances into a 1D array
 		double [] distPairs = new double[this.pairArray.length * this.pairArray.length];
 		int count = 0;
-		for(int i = 0; i < dataColumns; i++)
-		{
-			for(int j = 0; j < dataRows; j++)
-			{
-				data[count] = this.gridData[j][i];
-				count++;
-			}
-		}
-		count = 0;
-		for(int i = 0; i < weightsColumns; i++)
-		{
-			for(int j = 0; j < weightsRows; j++)
-			{
-				nodes[count] = this.weights[j][i];
-				count++;
-			}
-		}
-		count = 0;
 		int currentX;
 		int currentY;
 		double xDist;
@@ -171,6 +173,12 @@ public class SOM extends Grid
 		// This is approximately 1.75 * variance (See Chebychev's inequality)
 		// https://en.wikipedia.org/wiki/Chebyshev's_inequality
 		neighborhood = 1.75 * variance(distPairs);
+
+		double stepLR = learningRate/iterations;
+		//double stepNH = neighborhood/iterations;
+
+		//double initLR = learningRate;
+		double initNH = neighborhood;
 		
 		// Adapted from the C code for VR_onlineSOM in the R "class" package
 		for(int i = 0; i < iterations; i++)
@@ -189,7 +197,7 @@ public class SOM extends Grid
 				{
 					// For the current random observation and the current column,
 					// find the difference
-					tmp = data[currentObs + k * dataRows] - nodes[j + k * weightsRows];
+					tmp = gridData[currentObs][k] - weights[j][k];
 					// dist^2 is the square of the sums of
 					// all the individual components, and
 					// minimizing distance^2 leads to the same
@@ -211,9 +219,23 @@ public class SOM extends Grid
 			// neighborhood as well); as training
 			// continues create smaller distortions and apply
 			// them within a smaller neighborhood.
-			learningRate -= (0.04 * i / iterations);
-			neighborhood -= (1.0 * i / iterations);
-			
+
+			// default decrease strategies: linear for learningRate, exponential for neighborhood
+
+			learningRate -= stepLR;
+			//neighborhood -= stepNH;
+
+			double exp = Math.exp(-3d*i/iterations);
+			//learningRate = initLR*exp;
+			neighborhood = initNH*exp;
+
+			// Rounding errors can lead to negative numbers towards the end.
+			// Stop then, else the algorithm acts wrongly, e.g., the BMU's weight will be moved away from the input vector.
+			if (learningRate <= 0 || neighborhood <= 0)
+			{
+				break;
+			}
+
 			// Apply the distortion to the map for nodes within
 			// the neighborhood
 			for(int l = 0; l < weightsRows; l++)
@@ -224,68 +246,43 @@ public class SOM extends Grid
 					// Apply to all columns in this row
 					for(int m = 0; m < dataColumns; m++)
 					{
-						tmp = data[currentObs + m * dataRows] - nodes[l + m * weightsRows];
-						nodes[l + m * weightsRows] += (tmp * learningRate);
+						tmp = gridData[currentObs][m] - weights[l][m];
+						weights[l][m] += (tmp * learningRate);
 					}
 				}
 			}
 		}
-		
-		// Adapted from the C code for mapKohonen in the R "kohonen" package
-		// Now calculate the weights/data to map distance
-		count = 0;
-		double [] mapDist = new double[dataRows * weightsRows];
-		// Loop over all data points
-		for(int i = 0; i < dataRows; i++)
-		{
-			// Loop over all the map nodes
-			for(int j = 0; j < weightsRows; j++)
-			{
-				mapDist[count] = 0;
-				// Loop over all the variable
-				for(int k = 0; k < weightsColumns; k++)
-				{
-					tmp = data[i + k * dataRows] - nodes[j + k * weightsRows];
-					mapDist[count] += (tmp * tmp);	
-				}
-				count++;
-			}
-		}
-		
-		// Represent the map distances as the original matrix
-		count = 0;
-		double [][] distanceMatrix = new double [dataRows][weightsRows];
-		for(int i = 0; i < dataRows; i++)
-		{
-			for(int j = 0; j < weightsRows; j++)
-			{
-				distanceMatrix[i][j] = mapDist[count];
-				count++;
-			}
-		}
-		
+
 		// Finally label the observations with the nearest node
 		// to complete the map training
 		finalNodes = new int[dataRows];
 		finalDistances = new double[dataRows];
-		count = 0;
-		int nodeIndex;
+
 		double minDistance;
-		for(int i = 0; i < distanceMatrix.length; i++)
+
+		// Adapted from the C code for mapKohonen in the R "kohonen" package
+		// Now calculate the weights/data to map distance
+		double [][] distanceMatrix = new double [dataRows][weightsRows];
+		// Loop over all data points
+		for(int i = 0; i < dataRows; i++)
 		{
-			count = 0;
-			nodeIndex = count;
 			minDistance = Double.MAX_VALUE;
+			// Loop over all the map nodes
 			for(int j = 0; j < weightsRows; j++)
 			{
+				distanceMatrix[i][j] = 0;
+				// Loop over all the variable
+				for(int k = 0; k < weightsColumns && distanceMatrix[i][j] < minDistance; k++)
+				{
+					tmp = gridData[i][k] - weights[j][k];
+					distanceMatrix[i][j] += (tmp * tmp);
+				}
 				if(distanceMatrix[i][j] < minDistance)
 				{
 					minDistance = distanceMatrix[i][j];
-					nodeIndex = count;
+					finalNodes[i] = j;
 				}
-				count++;
 			}
-			finalNodes[i] = nodeIndex;
 			finalDistances[i] = minDistance;
 		}
 		//for(int i = 0; i < finalNodes.length; i++)
@@ -330,12 +327,12 @@ public class SOM extends Grid
 		// Sample from the data to determine
 		// which observations to use
 		// for initial weights
-		Set <Integer> samplePoints = new HashSet <Integer>();
+		Set <Integer> samplePoints = new HashSet <>();
 		while(samplePoints.size() < pairRows)
 		{
 			samplePoints.add((int)(Math.random() * dataRows));
 		}
-		Integer [] sampleIndex = samplePoints.toArray(new Integer[samplePoints.size()]);
+		Integer [] sampleIndex = samplePoints.toArray(new Integer[0]);
 		
 		// Use the selected rows to build the starting weights
 		weights = new double[pairRows][gridData[0].length];

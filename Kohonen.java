@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Visualize cell counts of a rectangular 
- * self-organizing map. Thie program fits
+ * self-organizing map. This program fits
  * a Kohonen network to an input containing
  * numeric data in a csv format.
  * 
@@ -27,7 +27,7 @@
  * the main method and constructs the necessary
  * windows for user input as well as reading in
  * the data and validating it. It then passes
- * the necesary data onto a SOM object where
+ * the necessary data onto a SOM object where
  * the model fitting is performed before
  * displaying the results.
  * 
@@ -45,7 +45,7 @@ public class Kohonen extends JFrame
 {
 	// Instance variables
 	private JButton fileChooser = new JButton("Input File");
-	private ArrayList <Double[]> inputData = new ArrayList<Double[]>();
+	private ArrayList <double[]> inputData = new ArrayList<>();
 	private Grid trainData;
 	private JTextField xDim = new JTextField(3);
 	private JTextField yDim = new JTextField(3);
@@ -64,14 +64,14 @@ public class Kohonen extends JFrame
 	 * @param input The file object to read in
 	 * 
 	 * */
-	public void readFile(File input)
+	public void readFile(String input)
 	{
-		// Open a Scanner
-		Scanner inFile;
+
+		// Open a BufferedReader
+		BufferedReader in;
 		try
 		{
-			inFile = new Scanner(input);
-			inFile.useDelimiter("\n");
+			in = new BufferedReader(new FileReader(input));
 		}
 		catch(IOException ioe)
 		{
@@ -79,53 +79,57 @@ public class Kohonen extends JFrame
 			return;
 		}
 		
-		// Treat the first line as a header and use it
-		// to determine the number of columns
+		double[] currentRow;
 		int numColumns = 0;
-		String currentLine = inFile.next();
-		Scanner parser = new Scanner(currentLine);
-		parser.useDelimiter(",");
-		while(parser.hasNext())
+		String[] values;
+
+		try
 		{
-			parser.next();
-			numColumns++;
-		}
-		// There should be at least two columns
-		if(numColumns < 2)
-		{
-			JOptionPane.showMessageDialog(null, "The file should have at least two columns.");
-			return;
-		}
-		// Now read the data
-		Double [] currentRow = new Double[numColumns];
-		int rowNum = 0;
-		while(inFile.hasNext())
-		{
-			currentLine = inFile.next();
-			parser = new Scanner(currentLine);
-			parser.useDelimiter(",");
-			try
+			// Determine the number of columns by reading the first line
+			String str;
+			if ((str = in.readLine()) != null)
 			{
-				currentRow = new Double[numColumns];
-				// Ignore data in rows with more entries than in the header
-				for(int i = 0; i < numColumns; i++)
+				values = str.split(",");
+				numColumns = values.length;
+				// There should be at least two columns
+				if(numColumns < 2)
 				{
-					currentRow[i] = Double.parseDouble(parser.next());
+					JOptionPane.showMessageDialog(null, "The file should have at least two columns.");
+					return;
 				}
-				inputData.add(currentRow);
+				// Use do-while loop to scan first line too
+				do
+				{
+					try
+					{
+						values = str.split(",");
+						currentRow = new double[numColumns];
+						// Ignore data in rows with more entries than in the header
+						for (int i = 0; i < numColumns; i++)
+						{
+							currentRow[i] = Double.parseDouble(values[i]);
+						}
+						inputData.add(currentRow);
+					}
+					// Ensure the data are parsed to numeric
+					catch(NumberFormatException nfe)
+					{
+						JOptionPane.showMessageDialog(null, "The file should contain only numeric data.");
+						return;
+					}
+					// Ensure a non-jagged array
+					catch(NoSuchElementException nsee)
+					{
+						JOptionPane.showMessageDialog(null, "Every row should contain one number for every columns in the file header.");
+						return;
+					}
+				} while ((str = in.readLine()) != null);
 			}
-			// Ensure the data are parsed to numeric
-			catch(NumberFormatException nfe)
-			{
-				JOptionPane.showMessageDialog(null, "The file should contain only numeric data.");
-				return;
-			}
-			// Ensure a non-jagged array
-			catch(NoSuchElementException nsee)
-			{
-				JOptionPane.showMessageDialog(null, "Every row should contain one number for every columns in the file header.");
-				return;
-			}
+			in.close();
+		}
+		catch (IOException ioe)
+		{
+			JOptionPane.showMessageDialog(null, "IOException during file reading: " + ioe.getMessage());
 		}
 		
 		// Ensure # rows >= # cols
@@ -137,7 +141,7 @@ public class Kohonen extends JFrame
 		
 		// The data has passed validity checks, so convert to an array
 		double[][] validData = new double[inputData.size()][numColumns];
-		Double [] tmpArray;
+		double [] tmpArray;
 		for(int i = 0; i < inputData.size(); i++)
 		{
 			tmpArray = inputData.get(i);
@@ -179,7 +183,7 @@ public class Kohonen extends JFrame
 		//System.out.println("" + (endTime - startTime / 1000000));
 		// Plot the network as a heatmap
 		//status.setVisible(false);
-		plot(xVal, yVal, training.getNodes());
+		plot(training);
 	}
 	
 	/**
@@ -193,8 +197,11 @@ public class Kohonen extends JFrame
 	 * 
 	 * 
 	 * */
-	 public void plot(int xDim, int yDim, int [] nodes)
+	 public void plot(SOM som)
 	 {
+	 	int xDim = som.getXDim();
+	 	int yDim = som.getYDim();
+	 	int[] nodes = som.getNodes();
 		 // Determine the number of observations assigned to each node
 		 int [] counts = new int[xDim * yDim];
 		 for(int i = 0; i < nodes.length; i++)
@@ -281,12 +288,12 @@ public class Kohonen extends JFrame
 				JFileChooser fc = new JFileChooser();
 				fc.setCurrentDirectory(new File(System.getProperty("user.home")));
 				int result = fc.showOpenDialog(null);
-				if (result == fc.APPROVE_OPTION)
+				if (result == JFileChooser.APPROVE_OPTION)
 				{
 					// Ensure the ArrayList is empty, e.g. user loads a file after first one failed
 					inputData.clear();
 					File inputFile = fc.getSelectedFile();
-					readFile(inputFile);
+					readFile(inputFile.getAbsolutePath());
 				}
 			}
 		}
